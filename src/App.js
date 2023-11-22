@@ -4,13 +4,16 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  updateProfile
 } from 'firebase/auth';
 import { auth } from './config/firebase.config';
+import axios from 'axios';
 
 function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [nickname, setNickname] = useState('');
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
@@ -21,11 +24,23 @@ function App() {
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCred.user;
+
+      // Update the user profile with the nickname
+      await updateProfile(user, { displayName: nickname });
+
+      // Make a PUT request to your backend
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/users`, {
+      username: email, // Using email as username
+      password: password,
+      nickname: nickname,
+      });
+
       await sendEmailVerification(user);
       setSuccessMessage('Sign up successful! Please check your email for verification.');
       setErrorMessage(null);
       setEmail(''); 
       setPassword(''); 
+      setNickname('');
       setIsValidEmail(true); 
     } catch (error) {
       console.error(error.message);
@@ -96,6 +111,12 @@ function App() {
           type={'password'}
           placeholder={'Enter your Password'}
           onChange={(data) => setPassword(data.target.value)}
+        />
+        <input
+          value={nickname}
+          type="text"
+          placeholder="Enter your Nickname"
+          onChange={(e) => setNickname(e.target.value)}
         />
         <button type="button" onClick={signUpAction} disabled={!isValidEmail}>
           Sign Up

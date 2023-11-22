@@ -1,11 +1,13 @@
 const express = require("express");
 const lowDb = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
+const cors = require('cors');
 const app = express();
 
 const usersdb = lowDb(new FileSync('users.json', { defaultValue: [] }));
 
 app.use(express.json());
+app.use(cors());
 
 // Adding a user to the DB
 app.put('/api/users', (req, res) => {
