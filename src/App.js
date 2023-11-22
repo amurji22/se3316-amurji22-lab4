@@ -134,12 +134,6 @@ function App() {
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         {successMessage && <p className="success-message">{successMessage}</p>}
       </div>
-      {user && (
-        <div>
-          <p>{user?.email}</p>
-          <p>{user?.emailVerified ? 'True' : 'False'}</p>
-        </div>
-      )}
     </main>
   );  
 }

@@ -1,48 +1,52 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
 main {
   width: 100vw;
   height: auto;
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  flex-direction: column;
+
 }
 
 main .container {
-  width: 280px; 
-  height: auto;
+  width: 100%; /* Adjust as needed */
+  height: 50px;
   padding: 20px 25px;
-  border: 1px solid rgba(0, 0, 0, 0.3);
+  border: 10px solid rgba(0, 0, 0, 0.3);
   border-radius: 8px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: start;
+  justify-content: space-between;
   gap: 20px;
 }
 
 main .container input {
-  width: calc(100% - 12px);
-  height: 36px; 
-  padding: 5px;
+  width: 200px;
+  height: 36px;
+  padding: 10px; /* Adjust padding */
   border-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   outline: none;
-  font-size: 18px; 
+  font-size: 18px;
   font-weight: 600;
   color: #555;
-  outline-offset: -1px; 
+  outline-offset: -1px;
 }
 
 main .container button {
-  width: calc(100% - 12px); 
-  height: 36px; 
+  width: 150px;
+  height: 70px;
+  padding: 10px; /* Adjust padding */
   border-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   background: teal;
-  font-size: 20px; 
+  font-size: 20px;
   font-weight: 600;
   color: #fff;
   cursor: pointer;
-  outline-offset: -1px; 
+  outline-offset: -1px;
 }
