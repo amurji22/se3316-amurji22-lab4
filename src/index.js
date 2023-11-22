@@ -4,6 +4,7 @@ import './index.css';
 import Title from './Title'
 import Login from './login';
 import About from './About';
+import Search from './Search'
 import reportWebVitals from './reportWebVitals';
 import 'tachyons';
 
@@ -13,6 +14,7 @@ root.render(
     <Title />
     <Login />
     <About />
+    <Search />
   </React.StrictMode>
 );
 

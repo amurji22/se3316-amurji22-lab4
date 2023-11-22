@@ -5,6 +5,8 @@ const cors = require('cors');
 const app = express();
 
 const usersdb = lowDb(new FileSync('users.json', { defaultValue: [] }));
+const infodb = lowDb(new FileSync('superhero_info.json'));
+const powersdb = lowDb(new FileSync('superhero_powers.json'));
 
 app.use(express.json());
 app.use(cors());
@@ -31,6 +33,30 @@ app.put('/api/users', (req, res) => {
 
     usersdb.push(newUser).write();
     res.status(200).send('User added successfully: ' + newUser.username);
+});
+
+// Custom search with no powers
+app.get('/api/superheros/all/:field/:pattern/:n/:sort', (req, res) => {
+    const field = req.params.field;
+    const pattern = req.params.pattern;
+    const n = parseInt(req.params.n);
+
+    // Iterate over each array element and checl if field value  = pattern
+    let allMatches = infodb.filter((item) => item[field] === pattern).value();
+
+    if (!allMatches || allMatches.length === 0) {
+        return res.status(404).send("Not Found: No matches found.");
+    }
+
+    if (n > 0 && n < (allMatches.length)){
+        allMatches =allMatches.slice(0, n);
+        res.json(allMatches);
+    }
+
+    if (n === 0 || n >= allMatches.length) {
+        // If n is not provided or is greater than or equal to the number of matches, return all matches.
+        res.json(allMatches);
+    }
 });
 
 const port = process.env.PORT || 5000;
