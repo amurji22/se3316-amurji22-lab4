@@ -13,7 +13,7 @@ main {
 
 main .container {
   width: 100%; /* Adjust as needed */
-  height: 50px;
+  height: 90px;
   padding: 20px 25px;
   border: 10px solid rgba(0, 0, 0, 0.3);
   border-radius: 8px;
@@ -39,7 +39,7 @@ main .container input {
 
 main .container button {
   width: 150px;
-  height: 70px;
+  height: 60px;
   padding: 10px; /* Adjust padding */
   border-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.3);
