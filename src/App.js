@@ -27,14 +27,6 @@ function App() {
 
       // Update the user profile with the nickname
       await updateProfile(user, { displayName: nickname });
-
-      // Make a PUT request to your backend
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/users`, {
-      username: email, // Using email as username
-      password: password,
-      nickname: nickname,
-      });
-
       await sendEmailVerification(user);
       setSuccessMessage('Sign up successful! Please check your email for verification.');
       setErrorMessage(null);
@@ -57,6 +49,12 @@ function App() {
       } else {
         setErrorMessage(null);
         setSuccessMessage('Login successful!');
+        // Make a PUT request to the backend
+        await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/users`, {
+          username: email, // Using email as username
+          password: password,
+          nickname: nickname,
+        });
       }
     } catch (error) {
       console.error(error.message);
@@ -75,16 +73,21 @@ function App() {
   };
 
   const ResetEmail = async (auth, email) => {
-    try {
-      await sendPasswordResetEmail(auth, email);
-      setSuccessMessage('Success, please check your email for the reset link.');
-      setErrorMessage(null);
-  } catch (error) {
-      console.error(error.message);
-      setSuccessMessage('An error occurred. Please try again.');
-      setErrorMessage(null);
+      try {
+        await sendPasswordResetEmail(auth, email);
+        setSuccessMessage('Success, please check your email for the reset link.');
+        setErrorMessage(null);
+    } catch (error) {
+        console.error(error.message);
+        setSuccessMessage('An error occurred. Please try again.');
+        setErrorMessage(null);
+    }
+  };
+
+  const nickname_popup = () => {
+    alert("Nickname is not stored until email is verified!! Recommended to leave blank until log in");
   }
-};
+
 
   useEffect(() => {
     auth.onAuthStateChanged((userCred) => {
@@ -117,6 +120,7 @@ function App() {
           type="text"
           placeholder="Enter your Nickname"
           onChange={(e) => setNickname(e.target.value)}
+          onClick={nickname_popup}
         />
         <button type="button" onClick={signUpAction} disabled={!isValidEmail}>
           Sign Up
