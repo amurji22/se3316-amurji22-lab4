@@ -74,10 +74,11 @@ function Search() {
                     <p className="red">{`An error occurred: ${error}`}</p>
                 ) : (
                     result.map((item, index) => (
-                        <div key={index} className="mb2 ma2 pa3 ba b--black-20 flex-grow-0">
+                        <div key={index} className="mb2 ma2 pa3 ba b--black flex-grow-0">
                             {/* Display name and publisher at first glance */}
-                            <p>
-                                <strong>Name:</strong> {item.name} - <strong>Publisher:</strong> {item.Publisher}
+                            <p className="white" style={{ fontFamily: 'Comic Sans MS' }}>
+                                <strong>Name:</strong> {item.name} 
+                                <strong>   Publisher:</strong> {item.Publisher}
                             </p>
                         </div>
                     ))
