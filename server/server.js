@@ -35,29 +35,36 @@ app.put('/api/users', (req, res) => {
     res.status(200).send('User added successfully: ' + newUser.username);
 });
 
-// Custom search with no powers
-app.get('/api/superheros/all/:field/:pattern/:n/:sort', (req, res) => {
-    const field = req.params.field;
-    const pattern = req.params.pattern;
-    const n = parseInt(req.params.n);
-
-    // Iterate over each array element and checl if field value  = pattern
-    let allMatches = infodb.filter((item) => item[field] === pattern).value();
+// Custom search 
+app.get('/api/superheros/all', (req, res) => {
+    const name = req.body.name;
+    const race = req.body.race;
+    const power = req.body.power;
+    const publisher = req.body.publisher;
+    console.log(name)
+    // First, filter infodb based on name, race, and publisher
+    let allMatches = infodb.filter((item) => (
+        (!name || item.name === name) &&
+        (!race || item.Race === race) &&
+        (!publisher || item.Publisher === publisher)
+    ));
 
     if (!allMatches || allMatches.length === 0) {
         return res.status(404).send("Not Found: No matches found.");
     }
 
-    if (n > 0 && n < (allMatches.length)){
-        allMatches =allMatches.slice(0, n);
-        res.json(allMatches);
+    // If power is provided, further filter through powersdb
+    if (power) {
+        allMatches = allMatches.forEach((item) =>
+            powersdb.filter((hero) => hero.name === item.name && hero.powers.includes(power))
+        );
     }
 
-    if (n === 0 || n >= allMatches.length) {
-        // If n is not provided or is greater than or equal to the number of matches, return all matches.
-        res.json(allMatches);
-    }
+    res.json(allMatches.value());
 });
+
+
+
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
