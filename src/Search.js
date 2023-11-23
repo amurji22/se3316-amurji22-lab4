@@ -2,15 +2,21 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function Search() {
-    const [field, setField] = useState("");
-    const [pattern, setPattern] = useState("");
-    const [n, setN] = useState(0);
+    const [name, setName] = useState("");
+    const [race, setRace] = useState("");
+    const [power, setPower] = useState("");
+    const [publisher, setPublisher] = useState("");
     const [result, setResult] = useState([]);
     const [error, setError] = useState(null);
 
     const handleSearch = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/superheros/all/${field}/${pattern}/${n}/`);
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/superheros/all`, {
+                name: name, // Using email as username
+                race: race,
+                publisher: publisher,
+                power: power,
+            });
             const data = response.data;
 
             // Update the state with the fetched data
@@ -29,25 +35,33 @@ function Search() {
             <h2 className="mb3">Custom Search</h2>
             <input
                 type="text"
-                placeholder="Enter a Field"
+                placeholder="Enter a Name"
                 className="pa2 mr2 ba b--black-20"
-                value={field}
-                onChange={(e) => setField(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
             />
             <input
                 type="text"
-                placeholder="Enter a Pattern"
+                placeholder="Enter a Race"
                 className="pa2 mr2 ba b--black-20"
-                value={pattern}
-                onChange={(e) => setPattern(e.target.value)}
+                value={race}
+                onChange={(e) => setRace(e.target.value)}
             />
             <input
                 type="text"
-                placeholder="Number of Results"
+                placeholder="Enter a Power"
                 className="pa2 mr2 ba b--black-20"
                 style={{ width: "150px" }}
-                value={n}
-                onChange={(e) => setN(e.target.value)}
+                value={power}
+                onChange={(e) => setPower(e.target.value)}
+            />
+            <input
+                type="text"
+                placeholder="Enter a Publisher"
+                className="pa2 mr2 ba b--black-20"
+                style={{ width: "150px" }}
+                value={publisher}
+                onChange={(e) => setPublisher(e.target.value)}
             />
             <button
                 onClick={handleSearch}

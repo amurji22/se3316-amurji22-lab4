@@ -36,7 +36,7 @@ app.put('/api/users', (req, res) => {
 });
 
 // Custom search 
-app.get('/api/superheros/all', (req, res) => {
+app.post('/api/superheros/all', (req, res) => {
     const name = req.body.name;
     const race = req.body.race;
     const power = req.body.power;
