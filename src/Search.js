@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import './Search.css';
 
 function Search() {
     const [name, setName] = useState("");
@@ -8,6 +9,7 @@ function Search() {
     const [publisher, setPublisher] = useState("");
     const [result, setResult] = useState([]);
     const [error, setError] = useState(null);
+    const [contentVisible, setContentVisible] = useState(false);
 
     const handleSearch = async () => {
         try {
@@ -29,6 +31,15 @@ function Search() {
             setResult([]);
         }
     };
+
+    const toggleContent = () =>{
+        setContentVisible(!contentVisible);
+    }
+
+    const search_DDG = () =>{
+        const url = 'https://duckduckgo.com/?q=' + name;
+        window.open(url);
+    }
 
     return (
         <div className="pa3 tc">
@@ -79,6 +90,17 @@ function Search() {
                             <p className="white" style={{ fontFamily: 'Comic Sans MS' }}>
                                 <strong>Name:</strong> {item.name} 
                                 <strong>   Publisher:</strong> {item.Publisher}
+                                <br></br>
+                                <br></br>
+                                <button type="button" className="collapsible" onClick={toggleContent}>
+                                {contentVisible ? "Less Info" : "More Info"}
+                                </button>
+                                <div className={contentVisible ? "content" : "content hidden"}>
+                                    {Object.keys(item).map(key => (
+                                        <p key={key}><strong>{key}:</strong> {item[key]}</p>
+                                    ))}
+                                </div>
+                                <button type="button" onClick={search_DDG}>Search on DDG</button>
                             </p>
                         </div>
                     ))

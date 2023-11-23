@@ -1,0 +1,10 @@
+.content {
+    padding: 0 18px;
+    display: block;
+    overflow: hidden;
+  }
+.content.hidden {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+  }
