@@ -10,6 +10,7 @@ function Search() {
     const [result, setResult] = useState([]);
     const [error, setError] = useState(null);
     const [contentVisible, setContentVisible] = useState(false);
+    const [expandedHeroIndex, setExpandedHeroIndex] = useState(null); 
 
     const handleSearch = async () => {
         try {
@@ -32,14 +33,15 @@ function Search() {
         }
     };
 
-    const toggleContent = () =>{
-        setContentVisible(!contentVisible);
-    }
+    const toggleContent = (index) => {
+        setExpandedHeroIndex(expandedHeroIndex === index ? null : index);
+    };
 
-    const search_DDG = () =>{
-        const url = 'https://duckduckgo.com/?q=' + name;
+    const search_DDG = (heroName) => {
+        const url = 'https://duckduckgo.com/?q=' + heroName;
         window.open(url);
-    }
+    };
+    
 
     return (
         <div className="pa3 tc">
@@ -86,29 +88,25 @@ function Search() {
                 ) : (
                     result.map((item, index) => (
                         <div key={index} className="mb2 ma2 pa3 ba b--black flex-grow-0">
-                            {/* Display name and publisher at first glance */}
                             <p className="white" style={{ fontFamily: 'Comic Sans MS' }}>
                                 <strong>Name:</strong> {item.name} 
                                 <strong>   Publisher:</strong> {item.Publisher}
                                 <br></br>
                                 <br></br>
-                                <button type="button" className="collapsible" onClick={toggleContent}>
-                                {contentVisible ? "Less Info" : "More Info"}
+                                <button type="button" className="collapsible" onClick={() => toggleContent(index)}>
+                                    {expandedHeroIndex === index ? "Less Info" : "More Info"}
                                 </button>
-                                <div className={contentVisible ? "content" : "content hidden"}>
+                                <div className={expandedHeroIndex === index ? "content" : "content hidden"}>
                                     {Object.keys(item).map(key => (
                                         <p key={key}><strong>{key}:</strong> {item[key]}</p>
                                     ))}
                                 </div>
-                                <button type="button" onClick={search_DDG}>Search on DDG</button>
+                                <button type="button" onClick={() => search_DDG(item.name)}>Search on DDG</button>
                             </p>
                         </div>
                     ))
                 )}
             </div>
-
-
-
         </div>
     );
 }
