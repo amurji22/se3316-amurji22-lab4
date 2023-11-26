@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 
 function Authenticated_lists() {
@@ -8,6 +8,9 @@ function Authenticated_lists() {
   const [visibility, setVisibility] = useState('Private'); 
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null); 
+  const [lists, setLists] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
+
 
   const handleCreateList = async () => {
     try {
@@ -34,6 +37,23 @@ function Authenticated_lists() {
       setSuccessMessage(null);
     }
   };
+
+  useEffect(() => {
+    const fetchLists = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/superheros/lists`);
+        setLists(response.data.slice(0, 20)); // Limiting to 20 lists
+        setFetchError(null);
+      } catch (error) {
+        console.error("Error fetching lists:", error);
+        setFetchError(error.message);
+        setLists([]);
+      }
+    };
+
+    fetchLists();
+  }, []);
+  
 
   return (
     <div className="pa3 tc">
@@ -101,7 +121,29 @@ function Authenticated_lists() {
       {successMessage && <p className="success-message green fw-bold">{successMessage}</p>}
       {errorMessage && <p className="error-message red fw-bold">{errorMessage}</p>}
       <div className="mt3">
-        <h2>Created List</h2>
+        <h2 >Created List</h2>
+        {fetchError ? (
+            <p className="red">{`An error occurred while fetching lists: ${fetchError}`}</p>
+        ) : (
+            lists.map((list, index) => (
+            <div key={index} className="mb2 ma2 pa3 ba b--black flex-grow-0">
+                <p className="white" style={{ fontFamily: 'Comic Sans MS' }}>
+                <strong>List Name:</strong> {list.listName}
+                <br />
+                <br />
+                <button
+                type="button"
+                className="collapsible"
+                onClick={() => {
+                    // Placeholder for more info button functionality
+                }}
+                >
+                More Info
+                </button>
+                </p>
+            </div>
+            ))
+        )}
       </div>
     </div>
   );

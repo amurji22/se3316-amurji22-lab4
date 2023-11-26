@@ -108,6 +108,17 @@ app.put('/api/superheros/create', (req, res) => {
     res.status(200).send('List updated successfully');
 });
 
+// Get all the list created 
+app.get('/api/superheros/lists', (req, res) => {
+    const privateLists = infodb.filter({ "visibility": "Private" }).value() || [];
+    const publicLists = infodb.filter({ "visibility": "Public" }).value() || [];
+    
+    const combinedLists = [...privateLists, ...publicLists];
+
+    res.json(combinedLists);
+});
+
+
 // JWT Authentication 
 
 // Creating a token
