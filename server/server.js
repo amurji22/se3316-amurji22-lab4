@@ -67,7 +67,7 @@ app.post('/api/superheros/all', (req, res) => {
 });
 
 // Creating List
-app.put('/api/superheros', (req, res) => {
+app.put('/api/superheros/create', (req, res) => {
     const listName = req.body.name
     const description = req.body.description
     const names = req.body.superheros 
@@ -86,7 +86,7 @@ app.put('/api/superheros', (req, res) => {
     // Check every Superhero name exists 
     try {
         names.forEach(name => {
-          const found = db.get('infodb').find({ name }).value();
+          const found = infodb.find({"name": name }).value();
           if (!found) {
             throw new Error(`Superhero name not found in the DB: ${name}`);
           }
