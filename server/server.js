@@ -1,7 +1,10 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const express = require("express");
 const lowDb = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const app = express();
 
 const usersdb = lowDb(new FileSync('users.json', { defaultValue: [] }));
@@ -62,6 +65,43 @@ app.post('/api/superheros/all', (req, res) => {
 
     res.json(allMatches.value());
 });
+
+// JWT Authentication 
+
+// Creating a token
+app.post('/login', (req, res) => {
+    // Only call for authenticated users
+    const username = req.body.username
+    const user = { name: username }
+
+    usersdb.find({ "username": username }).assign({ "access": "authenticated user" }).write();
+
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+    res.json({ accessToken: accessToken})
+
+});
+
+// Authenticate token do u hv the right token to be a user??
+function authenticateToken(req, res, next){
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    // No token sent 
+    if(token == null) return res.status(401)
+
+    // Verify token
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        // Invalid token
+        if(err) return res.status(403)
+
+        req.user = user
+        next()
+    })
+}
+
+app.get('/posts', authenticateToken, (req, res) => {
+    res.json(usersdb.filter(user => user.username === req.body.username).value())
+})
 
 
 

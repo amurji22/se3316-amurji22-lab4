@@ -5,6 +5,7 @@ import Title from './Title'
 import Login from './login';
 import About from './About';
 import Search from './Search'
+import Authenticated_lists from './Authenticated_lists'
 import reportWebVitals from './reportWebVitals';
 import 'tachyons';
 
@@ -15,6 +16,7 @@ root.render(
     <Login />
     <About />
     <Search />
+    <Authenticated_lists />
   </React.StrictMode>
 );
 
