@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 
-function Authenticated_lists() {
+function AuthenticatedLists() {
   const [listName, setListName] = useState('');
   const [description, setDescription] = useState('');
   const [listValues, setListValues] = useState('');
@@ -10,7 +10,8 @@ function Authenticated_lists() {
   const [successMessage, setSuccessMessage] = useState(null); 
   const [lists, setLists] = useState([]);
   const [fetchError, setFetchError] = useState(null);
-
+  const [detailedInfo, setDetailedInfo] = useState(null);
+  const [isInfoVisible, setIsInfoVisible] = useState(false); 
 
   const handleCreateList = async () => {
     try {
@@ -38,6 +39,20 @@ function Authenticated_lists() {
     }
   };
 
+  const handleMoreInfo = async (selectedList) => {
+    // Display the description from the original lists data
+    setDescription(selectedList.description);
+
+    try {
+      // Make another GET request to fetch detailed information about each superhero
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/superheros/moreInfo/${selectedList.listName}`);
+      setDetailedInfo(response.data);
+    } catch (error) {
+      console.error("Error fetching detailed information:", error);
+      setDetailedInfo(null);
+    }
+  };
+
   useEffect(() => {
     const fetchLists = async () => {
       try {
@@ -53,100 +68,115 @@ function Authenticated_lists() {
 
     fetchLists();
   }, []);
-  
+
+  const toggleInfoVisibility = () => {
+    setIsInfoVisible(!isInfoVisible);
+  };
 
   return (
     <div className="pa3 tc">
       <h2 className="mb3">Create a new list</h2>
+            <input
+            type="text"
+            id="list_name"
+            placeholder="Enter the list name"
+            className="pa2 mr2 ba b--black-20 w-15 h2"
+            required
+            onChange={(e) => setListName(e.target.value)}
+            />
 
-      <input
-        type="text"
-        id="list_name"
-        placeholder="Enter the list name"
-        className="pa2 mr2 ba b--black-20 w-15 h2"
-        required
-        onChange={(e) => setListName(e.target.value)}
-      />
+            <input
+            type="text"
+            id="list_description"
+            placeholder="Enter a description"
+            className="pa2 mr2 ba b--black-20 w-15 h2"
+            onChange={(e) => setDescription(e.target.value)}
+            />
 
-      <input
-        type="text"
-        id="list_description"
-        placeholder="Enter a description"
-        className="pa2 mr2 ba b--black-20 w-15 h2"
-        onChange={(e) => setDescription(e.target.value)}
-      />
+            <input
+            type="text"
+            id="list_values"
+            placeholder="Enter the superhero names"
+            className="pa2 mr2 ba b--black-20 w-15 h2"
+            required
+            onChange={(e) => setListValues(e.target.value)}
+            />
 
-      <input
-        type="text"
-        id="list_values"
-        placeholder="Enter the superhero names"
-        className="pa2 mr2 ba b--black-20 w-15 h2"
-        required
-        onChange={(e) => setListValues(e.target.value)}
-      />
+            <p className="mt3">Set Visibility of the list: </p>
 
-      <p className="mt3">Set Visibility of the list: </p>
+            <form>
+            <input
+                type="radio"
+                id="Public"
+                name="Visibility"
+                value="Public"
+                className="mr2"
+                onChange={() => setVisibility('Public')} 
+                checked={visibility === 'Public'} 
+            />
+            <label htmlFor="Public" className="mr3">Public</label>
 
-      <form>
-        <input
-          type="radio"
-          id="Public"
-          name="Visibility"
-          value="Public"
-          className="mr2"
-          onChange={() => setVisibility('Public')} 
-          checked={visibility === 'Public'} 
-        />
-        <label htmlFor="Public" className="mr3">Public</label>
+            <input
+                type="radio"
+                id="Private"
+                name="Visibility"
+                value="Private"
+                className="mr2"
+                onChange={() => setVisibility('Private')}
+                checked={visibility === 'Private'} 
+            />
+            <label htmlFor="Private">Private</label>
+            </form>
 
-        <input
-          type="radio"
-          id="Private"
-          name="Visibility"
-          value="Private"
-          className="mr2"
-          onChange={() => setVisibility('Private')}
-          checked={visibility === 'Private'} 
-        />
-        <label htmlFor="Private">Private</label>
-      </form>
-
-      <button
-        id="create_list"
-        className="pa2 br2 bg-blue white b--blue pointer mt3"
-        onClick={handleCreateList}
-      >
-        Create List!
-      </button>
-      {successMessage && <p className="success-message green fw-bold">{successMessage}</p>}
-      {errorMessage && <p className="error-message red fw-bold">{errorMessage}</p>}
-      <div className="mt3">
-        <h2 >Created List</h2>
+            <button
+            id="create_list"
+            className="pa2 br2 bg-blue white b--blue pointer mt3"
+            onClick={handleCreateList}
+            >
+            Create List!
+            </button>
+            {successMessage && <p className="success-message green fw-bold">{successMessage}</p>}
+            {errorMessage && <p className="error-message red fw-bold">{errorMessage}</p>}
+        <div className="mt3">
+        <h2>Created List</h2>
         {fetchError ? (
-            <p className="red">{`An error occurred while fetching lists: ${fetchError}`}</p>
+          <p className="red">{`An error occurred while fetching lists: ${fetchError}`}</p>
         ) : (
-            lists.map((list, index) => (
+          lists.map((list, index) => (
             <div key={index} className="mb2 ma2 pa3 ba b--black flex-grow-0">
-                <p className="white" style={{ fontFamily: 'Comic Sans MS' }}>
+              <p className="white" style={{ fontFamily: 'Comic Sans MS' }}>
                 <strong>List Name:</strong> {list.listName}
                 <br />
                 <br />
                 <button
-                type="button"
-                className="collapsible"
-                onClick={() => {
-                    // Placeholder for more info button functionality
-                }}
+                  type="button"
+                  className="collapsible"
+                  onClick={() => handleMoreInfo(list)}
                 >
-                More Info
+                  More Info
                 </button>
-                </p>
+              </p>
+              {description && (
+                <div>
+                  <p><strong>Description:</strong> {description}</p>
+                </div>
+              )}
+              {detailedInfo && (
+                <div>
+                  <p><strong>Detailed Information:</strong></p>
+                  <ul>
+                    {detailedInfo.map((hero, heroIndex) => (
+                      <li key={heroIndex}>{`Name: ${hero.superheroName}, Publisher: ${hero.publisher}`}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
-            ))
+          ))
         )}
       </div>
     </div>
   );
 }
 
-export default Authenticated_lists;
+export default AuthenticatedLists;

@@ -118,6 +118,30 @@ app.get('/api/superheros/lists', (req, res) => {
     res.json(combinedLists);
 });
 
+// Get name and publisher for every superhero in list
+app.get(`/api/superheros/moreInfo/:name`, (req, res) => {
+    const list_name = req.params.name;
+
+    const superherosArray = infodb.find({ "listName": list_name }).value();
+  
+    if (!superherosArray) {
+      // Handle case where list is not found
+      return res.status(404).json({ error: "List not found" });
+    }
+  
+    const superheros = superherosArray.superheros || [];
+    // Iterate over the superherosArray and find the publisher for each superhero
+    const detailedInfoArray = superheros.map(superheroName => {
+        // Find the corresponding document in infodb based on superheroName
+        const publisher = infodb.find({ "name": superheroName }).value();
+        return { superheroName, publisher: publisher.Publisher };
+    });
+  
+    res.json(detailedInfoArray);
+  });
+  
+  
+
 
 // JWT Authentication 
 
