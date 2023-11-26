@@ -66,6 +66,48 @@ app.post('/api/superheros/all', (req, res) => {
     res.json(allMatches.value());
 });
 
+// Creating List
+app.put('/api/superheros', (req, res) => {
+    const listName = req.body.name
+    const description = req.body.description
+    const names = req.body.superheros 
+    const visibility = req.body.visibility
+    const last_edited = req.body.time
+
+    // Error checking first
+
+    // Check if listname exists 
+    const existingList = infodb.find({"listName": listName }).value();
+
+    if (existingList) {
+        return res.status(400).send('A list with this name already exists!');
+    }
+
+    // Check every Superhero name exists 
+    try {
+        names.forEach(name => {
+          const found = db.get('infodb').find({ name }).value();
+          if (!found) {
+            throw new Error(`Superhero name not found in the DB: ${name}`);
+          }
+        });
+      } catch (error) {
+        return res.status(400).send('You entered a superhero name not in our DB');
+      }
+
+    // Create a new list 
+    const newList = {
+        listName: listName,
+        description: description,
+        superheros: names,
+        visibility: visibility,
+        last_edited: last_edited
+    }
+    
+    infodb.push(newList).write();
+    res.status(200).send('List updated successfully');
+});
+
 // JWT Authentication 
 
 // Creating a token
