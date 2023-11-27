@@ -140,6 +140,23 @@ app.get(`/api/superheros/moreInfo/:name`, (req, res) => {
     res.json(detailedInfoArray);
   });
   
+  // Delete a list
+app.delete('/api/superhero-list/:name', (req, res) => {
+    const list_name = req.params.name;
+    
+    // Check if listname exists 
+    const existingList = infodb.find({"listName": list_name}).value();
+
+    if (!existingList) {
+        return res.status(400).send('List name does not exists');
+    }
+
+    // If list exist delete it
+    else{
+        infodb.remove({ listName: list_name }).write();
+        return res.status(200).send('List deleted sucesfully');
+    }
+});
   
 
 
