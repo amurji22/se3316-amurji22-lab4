@@ -6,6 +6,7 @@ function ViewLists() {
   const [fetchError, setFetchError] = useState(null);
   const [detailedInfo, setDetailedInfo] = useState([]);
   const [selectedList, setSelectedList] = useState(null);
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
 
   const handleMoreInfo = async (list) => {
     setSelectedList(list);
@@ -17,6 +18,9 @@ function ViewLists() {
       console.error("Error fetching detailed information:", error);
       setDetailedInfo([]);
     }
+
+    // Toggle the visibility state
+    setIsInfoVisible(!isInfoVisible);
   };
 
   useEffect(() => {
@@ -52,24 +56,18 @@ function ViewLists() {
                 className="collapsible"
                 onClick={() => handleMoreInfo(list)}
               >
-                More Info
+                {isInfoVisible ? "Less Info" : "More Info"}
               </button>
+              {isInfoVisible && selectedList && selectedList.listName === list.listName && (
+                <div>
+                  {detailedInfo.map(({ superheroName, publisher }, heroIndex) => (
+                    <p key={heroIndex}>
+                      <strong>Superhero Name:</strong> {superheroName}, <strong>Publisher:</strong> {publisher}
+                    </p>
+                  ))}
+                </div>
+              )}
             </p>
-            {selectedList && selectedList.listName === list.listName && (
-              <div>
-                <p><strong>Description:</strong> {selectedList.description}</p>
-                {detailedInfo.length > 0 && (
-                  <div>
-                    <p><strong>Detailed Information:</strong></p>
-                    <ul>
-                      {detailedInfo.map((hero, heroIndex) => (
-                        <li key={heroIndex}>{`Name: ${hero.superheroName}, Publisher: ${hero.publisher}`}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         ))
       )}
