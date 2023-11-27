@@ -8,9 +8,6 @@ function AuthenticatedLists() {
   const [visibility, setVisibility] = useState('Private'); 
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null); 
-  const [lists, setLists] = useState([]);
-  const [fetchError, setFetchError] = useState(null);
-  const [detailedInfo, setDetailedInfo] = useState(null);
   const [isInfoVisible, setIsInfoVisible] = useState(false); 
 
   const handleCreateList = async () => {
@@ -37,40 +34,6 @@ function AuthenticatedLists() {
       setErrorMessage(error.message);
       setSuccessMessage(null);
     }
-  };
-
-  const handleMoreInfo = async (selectedList) => {
-    // Display the description from the original lists data
-    setDescription(selectedList.description);
-
-    try {
-      // Make another GET request to fetch detailed information about each superhero
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/superheros/moreInfo/${selectedList.listName}`);
-      setDetailedInfo(response.data);
-    } catch (error) {
-      console.error("Error fetching detailed information:", error);
-      setDetailedInfo(null);
-    }
-  };
-
-  useEffect(() => {
-    const fetchLists = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/superheros/lists`);
-        setLists(response.data.slice(0, 20)); // Limiting to 20 lists
-        setFetchError(null);
-      } catch (error) {
-        console.error("Error fetching lists:", error);
-        setFetchError(error.message);
-        setLists([]);
-      }
-    };
-
-    fetchLists();
-  }, []);
-
-  const toggleInfoVisibility = () => {
-    setIsInfoVisible(!isInfoVisible);
   };
 
   return (
@@ -137,44 +100,6 @@ function AuthenticatedLists() {
             </button>
             {successMessage && <p className="success-message green fw-bold">{successMessage}</p>}
             {errorMessage && <p className="error-message red fw-bold">{errorMessage}</p>}
-        <div className="mt3">
-        <h2>Created List</h2>
-        {fetchError ? (
-          <p className="red">{`An error occurred while fetching lists: ${fetchError}`}</p>
-        ) : (
-          lists.map((list, index) => (
-            <div key={index} className="mb2 ma2 pa3 ba b--black flex-grow-0">
-              <p className="white" style={{ fontFamily: 'Comic Sans MS' }}>
-                <strong>List Name:</strong> {list.listName}
-                <br />
-                <br />
-                <button
-                  type="button"
-                  className="collapsible"
-                  onClick={() => handleMoreInfo(list)}
-                >
-                  More Info
-                </button>
-              </p>
-              {description && (
-                <div>
-                  <p><strong>Description:</strong> {description}</p>
-                </div>
-              )}
-              {detailedInfo && (
-                <div>
-                  <p><strong>Detailed Information:</strong></p>
-                  <ul>
-                    {detailedInfo.map((hero, heroIndex) => (
-                      <li key={heroIndex}>{`Name: ${hero.superheroName}, Publisher: ${hero.publisher}`}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          ))
-        )}
-      </div>
     </div>
   );
 }
