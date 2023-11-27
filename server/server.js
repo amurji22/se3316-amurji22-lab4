@@ -10,6 +10,7 @@ const app = express();
 const usersdb = lowDb(new FileSync('users.json', { defaultValue: [] }));
 const infodb = lowDb(new FileSync('superhero_info.json'));
 const powersdb = lowDb(new FileSync('superhero_powers.json'));
+const reviewsdb = lowDb(new FileSync('reviews.json', { defaultValue: [] }));
 
 app.use(express.json());
 app.use(cors());
@@ -215,7 +216,50 @@ app.get(`/api/superheros/description/:name`, (req, res) => {
     res.json((infodb.find({ "listName": list_name }).value()).description);
   });
 
-  
+//   Write a review 
+app.put(`/api/superheros/list/review`, (req, res) => {
+    const listName = req.body.listName;
+    const rating = req.body.rating;
+    const comment = req.body.comment;
+
+    // Check if listname exists
+    const existingList = infodb.find({ "listName": listName }).value();
+
+    if (!existingList) {
+        return res.status(400).send('List name does not exist');
+    }
+
+    // Check if list is public
+    if (existingList.visibility === "Private") {
+        return res.status(400).send('The list provided is not public');
+    }
+
+    // Does list already have reviews?
+    const existingReviews = reviewsdb.find({ "listName": listName }).value();
+
+    if (!existingReviews) {
+        // Create a new list
+        const newList = {
+            listName: listName,
+            reviews: [[rating, comment]]
+        };
+
+        reviewsdb.push(newList).write();
+        res.status(200).send('List updated successfully');
+    } else {
+        // Update existing reviews
+        existingReviews.reviews.push([rating, comment]);
+        reviewsdb.remove({ "listName": listName }).write();
+        const newList = {
+            listName: listName,
+            reviews: existingReviews.reviews
+        };
+
+        reviewsdb.push(newList).write();
+        res.status(200).send('List updated successfully');
+    }
+});
+
 
 
 // JWT Authentication 
