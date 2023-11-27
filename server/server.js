@@ -157,6 +157,64 @@ app.delete('/api/superhero-list/:name', (req, res) => {
         return res.status(200).send('List deleted sucesfully');
     }
 });
+
+// Edit an exisitng list 
+app.put('/api/superheros', (req, res) => {
+    const listName = req.body.name
+    let description = req.body.description
+    let names = req.body.superheros 
+    const visibility = req.body.visibility
+    const last_edited = req.body.time
+
+
+    // Check if listname exists 
+    const existingList = infodb.find({"listName": listName }).value();
+
+    if (!existingList) {
+        return res.status(400).send('List name does not exists');
+    }
+
+    if (!description) {
+        description = (infodb.find({"listName": listName }).value()).description;
+    }
+    if(!names){
+        names = (infodb.find({"listName": listName }).value()).superheros;
+    }
+    
+    // Check every Superhero name exists 
+    try {
+        names.forEach(name => {
+            const found = infodb.find({"name": name }).value();
+            if (!found) {
+                throw new Error(`Superhero name not found in the DB: ${name}`);
+            }
+        });
+    } catch (error) {
+        return res.status(400).send('You entered a superhero name not in our DB');
+    }
+
+    // Remove old list
+    infodb.remove(item => item.listName === listName).write();
+
+    // Create a new list 
+    const newList = {
+        listName: listName,
+        description: description,
+        superheros: names,
+        visibility: visibility,
+        last_edited: last_edited
+    }
+    
+    infodb.push(newList).write();
+    res.status(200).send('List updated successfully');
+});
+
+// Get a description for a list
+app.get(`/api/superheros/description/:name`, (req, res) => {
+    const list_name = req.params.name;
+    res.json((infodb.find({ "listName": list_name }).value()).description);
+  });
+
   
 
 

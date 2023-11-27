@@ -65,6 +65,7 @@ function ViewLists() {
               </button>
               {isInfoVisible[list.listName] && selectedList && selectedList.listName === list.listName && (
                 <div>
+                  <p><strong>Description:</strong> {selectedList.description}</p>
                   {detailedInfo.map(({ superheroName, publisher }, heroIndex) => (
                     <p key={heroIndex}>
                       <strong>Superhero Name:</strong> {superheroName}, <strong>Publisher:</strong> {publisher}

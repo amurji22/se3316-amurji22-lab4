@@ -7,6 +7,7 @@ import About from './About';
 import Search from './Search'
 import Create_lists from './Create_lists'
 import View_lists from './view_lists'
+import Edit_list from './Edit_list'
 import Delete_lists from './Delete_lists.js'
 import reportWebVitals from './reportWebVitals';
 import 'tachyons';
@@ -20,6 +21,7 @@ root.render(
     <Search />
     <Create_lists />
     <View_lists />
+    <Edit_list />
     <Delete_lists />
   </React.StrictMode>
 );
