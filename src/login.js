@@ -55,6 +55,25 @@ function App() {
           password: password,
           nickname: nickname,
         });
+        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+          username: email, 
+        }).then(response => {
+          // Assuming the server responds with { accessToken: "your_access_token" }
+          const accessToken = response.data.accessToken;
+
+          let storedData = [email, accessToken]
+  
+          // Now you can use the accessToken as needed, for example, store it in local storage
+          localStorage.setItem('current_user',JSON.stringify(storedData));
+  
+          console.log('userTokens', storedData);
+
+          window.location.reload();
+      })
+      .catch(error => {
+          // Handle login error
+          console.error(error);
+      });
       }
     } catch (error) {
       console.error(error.message);

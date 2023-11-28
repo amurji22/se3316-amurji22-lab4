@@ -295,8 +295,8 @@ function authenticateToken(req, res, next){
     })
 }
 
-app.get('/posts', authenticateToken, (req, res) => {
-    res.json(usersdb.filter(user => user.username === req.body.username).value())
+app.get('/posts/:username', authenticateToken, (req, res) => {
+    res.json(usersdb.filter(user => user.username === req.params.username).value())
 })
 
 
