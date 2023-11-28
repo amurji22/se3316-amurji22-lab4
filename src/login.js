@@ -61,7 +61,7 @@ function App() {
           // Assuming the server responds with { accessToken: "your_access_token" }
           const accessToken = response.data.accessToken;
 
-          let storedData = [email, accessToken]
+          let storedData = [email, accessToken];
   
           // Now you can use the accessToken as needed, for example, store it in local storage
           localStorage.setItem('current_user',JSON.stringify(storedData));
@@ -107,6 +107,17 @@ function App() {
     alert("Nickname is not stored until email is verified!! Recommended to leave blank until log in");
   }
 
+  const signOutAction = () => {
+    // Clear the 'current_user' from localStorage
+    localStorage.removeItem('current_user');
+    
+    // Sign out the user
+    auth.signOut();
+
+    // Reload the page to reflect the sign-out state
+    window.location.reload();
+  };
+
 
   useEffect(() => {
     auth.onAuthStateChanged((userCred) => {
@@ -149,6 +160,9 @@ function App() {
         </button>
         <button type="button" onClick={() => ResetEmail(auth, email)} disabled={!isValidEmail}>
           Reset Password
+        </button>
+        <button type="button" onClick={signOutAction}>
+          Sign Out
         </button>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         {successMessage && <p className="success-message">{successMessage}</p>}
