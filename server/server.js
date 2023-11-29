@@ -25,7 +25,15 @@ app.put('/api/users', (req, res) => {
     const existingUser = usersdb.find({ "username": username }).value();
 
     if (existingUser) {
-        return res.status(400).send('User already signed up!');
+        usersdb.remove({ username: username }).write();
+        const newUser = {
+            username: existingUser.username,
+            password: password,
+            nickname: existingUser.nickname,
+            access: "authenticated user"
+        }
+        usersdb.push(newUser).write();
+       return res.status(200).send('User added successfully: ' + newUser.username);
     }
 
     // Create a new user 
