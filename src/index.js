@@ -32,14 +32,15 @@ const App = () => {
 
         try {
           // Use the accessToken to make a GET request to a protected endpoint
-          // const response = await axios.get(
-          //   `${process.env.REACT_APP_BACKEND_URL}/posts/${email}`,
-          //   {
-          //     headers: {
-          //       Authorization: `Bearer ${accessToken}`,
-          //     },
-          //   }
-          // );
+          fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/posts/${email}`,
+            {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
 
           // The GET request was successful, handle the response as needed
           console.log('GET Request Successful:');
