@@ -6,6 +6,7 @@ import Title from './Title';
 import Login from './login';
 import About from './About';
 import Search from './Search';
+import LimitedViewLists from './limited_view_lists';
 import Create_lists from './Create_lists';
 import View_lists from './view_lists';
 import Edit_list from './Edit_list';
@@ -75,6 +76,7 @@ const App = () => {
       <Login />
       <About />
       <Search />
+      <LimitedViewLists />
       
       {/* Conditionally render components based on the token */}
       {hasValidToken && (

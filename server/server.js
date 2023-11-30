@@ -268,6 +268,50 @@ app.put(`/api/superheros/list/review`, (req, res) => {
     }
 });
 
+// Get all the powers for a superhero list of names
+app.get('/api/superhero-list/all_powers/:name', (req, res) => {
+    const list_name = req.params.name;
+
+    // Check if listname exists
+    const existingList = infodb.find({ "listName": list_name }).value();
+
+    if (!existingList) {
+        return res.status(400).send('List name does not exist');
+    }
+
+    // Retrieve all Names from the list
+    const names = infodb.find({ "listName": list_name }).get('superheros').value();
+    const result = [];
+
+    // Iterate over each ID and retrieve superhero information
+    names.forEach((name) => {
+        const powers = powersdb.find({ "hero_names": name }).value();
+
+        // Filter powers to include only true ones
+        const filteredPowers = {};
+        for (const power in powers) {
+            if (powers[power] === 'True') {
+                filteredPowers[power] = powers[power];
+            }
+        }
+
+        result.push({
+            name: name,
+            powers: filteredPowers,
+        });
+    });
+
+    // Format the response to include name, info, and powers
+    const formattedResult = result.map(({ name, powers }) => ({
+        name,
+        powers,
+    }));
+
+    res.json({
+        result: formattedResult,
+    });
+});
+
 
 
 // JWT Authentication 
