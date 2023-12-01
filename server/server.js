@@ -312,6 +312,30 @@ app.get('/api/superhero-list/all_powers/:name', (req, res) => {
     });
 });
 
+// Get all the info for a superheros name list
+app.get('/api/superhero-list/all/:name', (req, res) => {
+    const list_name = req.params.name;
+
+    // Check if listname exists
+    const existingList = infodb.find({ "listName": list_name }).value();
+
+    if (!existingList) {
+        return res.status(400).send('List name does not exist');
+    }
+
+    // Retrieve all Names from the list
+    const names = infodb.find({ "listName": list_name }).get('superheros').value();
+    const result = [];
+
+    // Iterate over each ID and retrieve superhero information
+    names.forEach((name) => {
+        result.push(infodb.find({ "name": name }).value());
+    });
+
+    res.json({
+        result: result,
+    });
+});
 
 
 // JWT Authentication 
