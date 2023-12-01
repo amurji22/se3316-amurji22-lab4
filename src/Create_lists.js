@@ -13,6 +13,9 @@ function AuthenticatedLists() {
   const handleCreateList = async () => {
     try {
       const time = new Date();
+      const currentUserData = localStorage.getItem('current_user');
+      const parsedData = JSON.parse(currentUserData);
+      const email = parsedData[0];
       const superheroesArray = listValues.split(',').map(value => value.trim());
 
       await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/superheros/create`, {
@@ -21,6 +24,7 @@ function AuthenticatedLists() {
         superheros: superheroesArray,
         visibility: visibility,
         time: time.toISOString(), 
+        email: email,
       });
 
       setListName('');

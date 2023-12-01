@@ -82,6 +82,7 @@ app.put('/api/superheros/create', (req, res) => {
     const names = req.body.superheros 
     const visibility = req.body.visibility
     const last_edited = req.body.time
+    const email = req.body.email
 
     // Error checking first
 
@@ -103,6 +104,7 @@ app.put('/api/superheros/create', (req, res) => {
       } catch (error) {
         return res.status(400).send('You entered a superhero name not in our DB');
       }
+      const creator = (usersdb.find({"username": email }).value()).nickname;
 
     // Create a new list 
     const newList = {
@@ -110,7 +112,8 @@ app.put('/api/superheros/create', (req, res) => {
         description: description,
         superheros: names,
         visibility: visibility,
-        last_edited: last_edited
+        last_edited: last_edited,
+        creator: creator
     }
     
     infodb.push(newList).write();
