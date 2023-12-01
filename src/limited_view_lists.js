@@ -8,6 +8,8 @@ function LimitedViewLists() {
   const [listPowers, setListPowers] = useState([]);
   const [selectedList, setSelectedList] = useState(null);
   const [isInfoVisible, setIsInfoVisible] = useState({});
+  const [listMoreInfo, setlistMoreInfo] = useState([]);
+  const [expandedSuperheroId, setExpandedSuperheroId] = useState(null);
 
   const handleMoreInfo = async (list) => {
     try {
@@ -24,6 +26,13 @@ function LimitedViewLists() {
       console.error("Error fetching Powers:", error);
       setListPowers([]);
     }
+    try {
+      const additionalInfo = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/superhero-list/all/${list.listName}`);
+      setlistMoreInfo(additionalInfo.data.result);
+    } catch (error) {
+      console.error("Error fetching additional info:", error);
+      setlistMoreInfo([]);
+    }
     // Toggle the visibility state for the selected list
     setIsInfoVisible(prevState => ({
       ...prevState,
@@ -32,6 +41,11 @@ function LimitedViewLists() {
 
     setSelectedList(list);
   };
+
+  const toggleSuperheroDetails = (superheroName) => {
+    setExpandedSuperheroId(prevName => prevName === superheroName ? null : superheroName);
+  };
+  
 
   useEffect(() => {
     const fetchLists = async () => {
@@ -73,10 +87,16 @@ function LimitedViewLists() {
               {isInfoVisible[list.listName] && selectedList && selectedList.listName === list.listName && (
                 <div>
                   <p><strong>Description:</strong> {selectedList.description}</p>
-                  {detailedInfo.map(({ superheroName, publisher }, heroIndex) => (
-                    <div key={heroIndex}>
-                      <p><strong>Superhero Name:</strong> {superheroName}</p>
-                      <p><strong>Publisher:</strong> {publisher}</p>
+                  {detailedInfo.map(({ superheroName, publisher }) => (
+                <div key={superheroName}>
+                  <p><strong>Superhero Name:</strong> {superheroName}</p>
+                  <p><strong>Publisher:</strong> {publisher}</p>
+                  <button
+                    type="button"
+                    onClick={() => toggleSuperheroDetails(superheroName)}
+                  >
+                    {expandedSuperheroId === superheroName ? "Hide Details" : "Show Details"}
+                  </button>
                       {listPowers.map((hero) => {
                         if (hero.name === superheroName) {
                           return (
@@ -87,6 +107,28 @@ function LimitedViewLists() {
                                   <li key={powerIndex}>{power}</li>
                                 ))}
                               </ul>
+                              {expandedSuperheroId === superheroName && (
+                                  <div>
+                                    {listMoreInfo.map((info) => {
+                                      if (info.name === superheroName) {
+                                        return (
+                                          <div key={info.name}>
+                                            <p><strong>Additional Information:</strong></p>
+                                            <ul>
+                                              {Object.entries(info).map(([key, value], index) => {
+                                                if (key !== 'name' && key !== 'publisher') {
+                                                  return <li key={index}>{`${key}: ${value}`}</li>;
+                                                }
+                                                return null;
+                                              })}
+                                            </ul>
+                                          </div>
+                                        );
+                                      }
+                                      return null;
+                                    })}
+                                  </div>
+                                )}
                             </div>
                           );
                         }
