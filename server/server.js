@@ -256,6 +256,11 @@ app.put(`/api/superheros/list/review`, (req, res) => {
         };
 
         reviewsdb.push(newList).write();
+
+        let existing_info = infodb.find({ "listName": listName }).value();
+        existing_info.avg_rating = rating;
+        infodb.remove({ "listName": listName }).write();
+        infodb.push(existing_info).write();
         res.status(200).send('List updated successfully');
     } else {
         // Update existing reviews
@@ -267,6 +272,20 @@ app.put(`/api/superheros/list/review`, (req, res) => {
         };
 
         reviewsdb.push(newList).write();
+
+        let sum = 0;
+        let count = 0;
+        (existingReviews.reviews).forEach(review => {
+            let number = parseInt(review[0], 10);
+            sum += number;
+            count++;
+        })
+        const average = count > 0 ? sum / count : 0;
+        let existing_info = infodb.find({ "listName": listName }).value();
+        existing_info.avg_rating = average;
+        infodb.remove({ "listName": listName }).write();
+        infodb.push(existing_info).write();
+
         res.status(200).send('List updated successfully');
     }
 });

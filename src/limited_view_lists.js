@@ -77,6 +77,15 @@ function LimitedViewLists() {
               <strong>List Name:</strong> {list.listName}
               <br />
               <br />
+              <strong>Created By:</strong> {list.creator}
+              <br />
+              <br />
+              <strong>Number of Heros in list:</strong> {(list.superheros).length}
+              <br />
+              <br />
+              <strong>Average Rating:</strong> {list.avg_rating}/ 5
+              <br />
+              <br />
               <button
                 type="button"
                 className="collapsible"
