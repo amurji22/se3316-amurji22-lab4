@@ -30,7 +30,7 @@ app.put('/api/users', (req, res) => {
             username: existingUser.username,
             password: password,
             nickname: existingUser.nickname,
-            access: "authenticated user"
+            access: existingUser.access
         }
         usersdb.push(newUser).write();
        return res.status(200).send('User added successfully: ' + newUser.username);
@@ -367,11 +367,18 @@ app.post('/login', (req, res) => {
     // Only call for authenticated users
     const username = req.body.username
     const user = { name: username }
+    const access = (usersdb.find({ "username": username}).value()).access
 
-    usersdb.find({ "username": username }).assign({ "access": "authenticated user" }).write();
+    if(access){
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+        res.json({ accessToken: accessToken, access: access})
+    }
+    else{
+        usersdb.find({ "username": username }).assign({ "access": "authenticated user" }).write();
 
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-    res.json({ accessToken: accessToken})
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+        res.json({ accessToken: accessToken, access: "authenticated user" })
+    }
 
 });
 

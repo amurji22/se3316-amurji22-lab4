@@ -60,14 +60,15 @@ function App() {
         }).then(response => {
           // Assuming the server responds with { accessToken: "your_access_token" }
           const accessToken = response.data.accessToken;
+          const access = response.data.access;
+          console.log(access)
+          // Add get method for the Acess 
 
-          let storedData = [email, accessToken];
+          let storedData = [email, accessToken, access];
   
           // Now you can use the accessToken as needed, for example, store it in local storage
           localStorage.setItem('current_user',JSON.stringify(storedData));
   
-          console.log('userTokens', storedData);
-
           window.location.reload();
       })
       .catch(error => {

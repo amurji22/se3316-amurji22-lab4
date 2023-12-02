@@ -12,11 +12,13 @@ import View_lists from './view_lists';
 import Edit_list from './Edit_list';
 import Delete_lists from './Delete_lists';
 import Create_Reviews from './Create_Reviews.js';
+import Admin from './Admin';
 import reportWebVitals from './reportWebVitals';
 import 'tachyons';
 
 const App = () => {
   const [hasValidToken, setHasValidToken] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -25,11 +27,12 @@ const App = () => {
 
       if (currentUserData) {
         // Split the string at the comma
-        const dataArray = currentUserData.split(',');
+        const dataArray = JSON.parse(currentUserData);
 
         // Extract email and token
         const email = dataArray[0];
         const accessToken = dataArray[1];
+        const access = dataArray[2];
 
         try {
           // Use the accessToken to make a GET request to a protected endpoint
@@ -48,6 +51,9 @@ const App = () => {
 
           // Set the state to indicate a valid token
           setHasValidToken(true);
+          if (access === "Admin"){
+            setIsAdmin(true);
+          }
         } catch (error) {
           // The GET request failed, handle the error
           console.error('GET Request Error:', error);
@@ -87,6 +93,10 @@ const App = () => {
           <Delete_lists />
           <Create_Reviews />
         </>
+      )}
+      {/* Conditonally render Admin components */}
+      {isAdmin && (
+          <Admin />
       )}
     </React.StrictMode>
   );
