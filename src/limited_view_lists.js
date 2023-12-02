@@ -51,7 +51,16 @@ function LimitedViewLists() {
     const fetchLists = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/superheros/lists`);
-        setLists(response.data.slice(0, 20)); // Limiting to 20 lists
+
+        // Filter out lists that are not public
+        const publicLists = response.data.filter(list => list.visibility === 'Public');
+
+        // Sort the lists by last edited date in descending order
+        const sortedLists = publicLists.sort((a, b) => new Date(b.last_edited) - new Date(a.last_edited));
+
+        // Limit the number of lists to 10
+        const limitedLists = sortedLists.slice(0, 10);
+        setLists(limitedLists);
         setFetchError(null);
         // Initialize visibility state for each list
         setIsInfoVisible(Object.fromEntries(response.data.map(list => [list.listName, false])));
@@ -67,7 +76,7 @@ function LimitedViewLists() {
 
   return (
     <div className="mt3 tc flex flex-wrap pa4">
-      <h2>Created List</h2>
+      <h2>Created Public List</h2>
       {fetchError ? (
         <p className="red">{`An error occurred while fetching lists: ${fetchError}`}</p>
       ) : (

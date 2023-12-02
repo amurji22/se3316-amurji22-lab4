@@ -65,7 +65,7 @@ function Create_Reviews() {
               className="pa2 br2 bg-blue white b--blue pointer mt3"
               onClick={CreateReview}
               >
-              Edit List!
+              Post Review!
               </button>
               {successMessage && <p className="success-message green fw-bold">{successMessage}</p>}
               {errorMessage && <p className="error-message red fw-bold">{errorMessage}</p>}
