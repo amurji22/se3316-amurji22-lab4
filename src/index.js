@@ -12,7 +12,7 @@ import View_lists from './view_lists';
 import Edit_list from './Edit_list';
 import Delete_lists from './Delete_lists';
 import Create_Reviews from './Create_Reviews.js';
-import Admin from './Admin';
+import Add_Admin from './addAdmin.js';
 import reportWebVitals from './reportWebVitals';
 import 'tachyons';
 
@@ -96,7 +96,7 @@ const App = () => {
       )}
       {/* Conditonally render Admin components */}
       {isAdmin && (
-          <Admin />
+          <Add_Admin />
       )}
     </React.StrictMode>
   );

@@ -359,7 +359,15 @@ app.get('/api/superhero-list/all/:name', (req, res) => {
     });
 });
 
-
+// Grant admin access to user
+app.put('/api/add_admin',(req, res) => {
+    const email = req.body.email;
+    let existing_info = usersdb.find({ "username": email }).value();
+    existing_info.access = "Admin";
+    usersdb.remove({ "username": email }).write();
+    usersdb.push(existing_info).write();
+    res.status(200).send('Admin added successfully');
+})
 // JWT Authentication 
 
 // Creating a token
