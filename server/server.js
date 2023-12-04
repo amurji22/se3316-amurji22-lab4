@@ -368,6 +368,48 @@ app.put('/api/add_admin',(req, res) => {
     usersdb.push(existing_info).write();
     res.status(200).send('Admin added successfully');
 })
+
+// Get all reviews
+app.get('/api/reviews/all/:name',(req, res) => {
+    const listName = req.params.name
+    res.json((reviewsdb.find({ "listName": listName}).value()).reviews);
+})
+
+app.post('/api/review/hidden', (req, res) => {
+    const listName = req.body.name;
+    const comment = req.body.comment;
+    let list = reviewsdb.find({ "listName": listName }).value();
+
+    if (list) {
+        let reviewUpdated = false;
+        
+        // Iterate over each review array
+        list.reviews = list.reviews.map(review => {
+            if (review[1] === comment) {
+                reviewUpdated = true;
+                // Toggle the hidden status
+                if (review.length === 3 && review[2].hasOwnProperty('hidden')) {
+                    review[2].hidden = review[2].hidden === 'yes' ? 'no' : 'yes';
+                } else {
+                    review.push({ hidden: 'yes' });
+                }
+            }
+            return review;
+        });
+
+        if (reviewUpdated) {
+            // Update the database with the modified list
+            reviewsdb.find({ "listName": listName }).assign({ reviews: list.reviews }).write();
+            res.json({ message: 'Review updated successfully.' });
+        } else {
+            res.status(404).json({ message: 'Review not found.' });
+        }
+    } else {
+        res.status(404).json({ message: 'List not found.' });
+    }
+});
+
+
 // JWT Authentication 
 
 // Creating a token

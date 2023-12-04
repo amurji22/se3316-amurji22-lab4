@@ -46,6 +46,7 @@ function ViewLists() {
 
   return (
     <div className="mt3 tc flex flex-wrap">
+      <br></br>
       <h2>Created List</h2>
       {fetchError ? (
         <p className="red">{`An error occurred while fetching lists: ${fetchError}`}</p>
